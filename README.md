@@ -33,23 +33,18 @@ APK: `app/build/outputs/apk/release/app-release-unsigned.apk`
 
 ## Signing (CI)
 
-GitHub Actions builds a signed APK on every `v*` tag. Requires these repo secrets:
+GitHub Actions builds a signed APK on every `v*` tag. Uses org-level secrets from
+`github.com/orgs/embedded-engineer/settings/secrets` — no per-repo setup needed.
 
 | Secret | Value |
 |--------|-------|
-| `KEYSTORE_BASE64` | `base64 termux-nsd.jks` |
+| `KEYSTORE_BASE64` | base64 of `termux-dev.p12` |
 | `KEYSTORE_PASS` | keystore password |
-| `KEY_ALIAS` | key alias (default: `termux-nsd`) |
+| `KEY_ALIAS` | `termux-dev` |
 | `KEY_PASS` | key password |
 
-Generate a keystore once and store it permanently — all updates must be signed with
-the same key or Android will refuse the install.
-
-```bash
-keytool -genkey -v -keystore termux-nsd.jks \
-  -keyalg RSA -keysize 2048 -validity 10000 \
-  -alias termux-nsd
-```
+The `termux-dev.p12` keystore is shared across all `embedded-engineer` releases.
+Never regenerate it — all installed APKs are permanently tied to this key.
 
 ## Usage from Termux
 

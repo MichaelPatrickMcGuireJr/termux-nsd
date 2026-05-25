@@ -43,15 +43,16 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASS: ${{ secrets.KEY_PASS }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > /tmp/signing.jks
+          echo "$KEYSTORE_BASE64" | base64 -d > /tmp/termux-dev.p12
           $ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools/ | tail -1)/apksigner sign \
-            --ks /tmp/signing.jks \
+            --ks /tmp/termux-dev.p12 \
+            --ks-type PKCS12 \
             --ks-pass "pass:$KEYSTORE_PASS" \
             --ks-key-alias "$KEY_ALIAS" \
             --key-pass "pass:$KEY_PASS" \
             --out app/build/outputs/apk/release/termux-nsd-signed.apk \
             app/build/outputs/apk/release/app-release-unsigned.apk
-          rm /tmp/signing.jks
+          rm /tmp/termux-dev.p12
 
       - name: Rename unsigned APK (no signing secrets)
         if: ${{ secrets.KEYSTORE_BASE64 == '' }}
